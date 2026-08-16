@@ -36,8 +36,10 @@ namespace AIStudyPlanner.Services
 
             var startInfo = new ProcessStartInfo
             {
-                FileName = "python",
-                Arguments = $"\"{_pythonScript}\"",
+FileName = OperatingSystem.IsWindows()
+    ? "python"
+    : "python3",
+                    Arguments = $"\"{_pythonScript}\"",
 
                 WorkingDirectory =
                     Path.GetDirectoryName(_pythonScript)!,
