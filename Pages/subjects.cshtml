@@ -1,0 +1,76 @@
+@page
+@model SubjectsModel
+
+@{
+    ViewData["Title"] = "My Subjects";
+}
+
+<div class="subjects-page">
+
+    <div class="subjects-header">
+
+        <div>
+            <p class="dashboard-label">AI STUDY PLANNER</p>
+
+            <h1>My Subjects 📚</h1>
+
+            <p>
+                Manage the subjects you want to study.
+            </p>
+        </div>
+
+        <a asp-page="/Subjects/Add"
+   class="primary-dashboard-button">
+    + Add Subject
+</a>
+
+    </div>
+
+
+    @if (Model.Subjects.Count == 0)
+    {
+        <div class="subjects-empty">
+
+            <div class="empty-icon">📚</div>
+
+            <h2>No subjects yet</h2>
+
+            <p>
+                Add your first subject to start building your study plan.
+            </p>
+
+        </div>
+    }
+    else
+    {
+        <div class="subjects-grid">
+
+            @foreach (var subject in Model.Subjects)
+            {
+                <div class="subject-card">
+
+                    <div class="subject-icon">
+                        📚
+                    </div>
+
+                    <div class="subject-content">
+
+                        <h2>@subject.Name</h2>
+
+                        <p>
+                            @subject.Description
+                        </p>
+
+                        <div class="subject-hours">
+                            ⏱️ @subject.WeeklyHours hours / week
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>

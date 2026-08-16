@@ -1,0 +1,652 @@
+@page
+@model DashboardModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="dashboard-page">
+
+    <div class="dashboard-header">
+
+        <div>
+            <p class="dashboard-label">AI STUDY PLANNER</p>
+
+            <h1>Welcome back! 👋</h1>
+
+            <p class="dashboard-subtitle">
+                Ready to study smarter today?
+            </p>
+        </div>
+
+        <form method="post" asp-page="/Account/Logout">
+
+            <button type="submit" class="logout-button">
+                Logout
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- DASHBOARD STATS -->
+
+    <div class="dashboard-stats">
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                📚
+            </div>
+
+            <div>
+                <span>Subjects</span>
+
+                <strong>
+                    @Model.SubjectCount
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                ⏱️
+            </div>
+
+            <div>
+                <span>Study Hours</span>
+
+                <strong>
+                    @Model.WeeklyStudyHours
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                🎯
+            </div>
+
+            <div>
+                <span>Progress</span>
+
+                <strong>
+                    @(Model.TaskCount == 0
+                        ? 0
+                        : Math.Round(
+                            (double)Model.CompletedTaskCount /
+                            Model.TaskCount * 100))
+                    %
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- TASKS -->
+    <!-- ===================================================== -->
+
+    <section class="dashboard-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h2>Today's Tasks</h2>
+
+                <p>
+                    Your study tasks
+                </p>
+
+            </div>
+
+        </div>
+
+
+        @if (TempData["DashboardMessage"] != null)
+        {
+            <div class="task-success-message"
+                 id="dashboardMessage">
+
+                @TempData["DashboardMessage"]
+
+            </div>
+        }
+
+
+        @if (Model.Tasks.Count == 0)
+        {
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    📝
+                </div>
+
+                <h3>No tasks yet</h3>
+
+                <p>
+                    Your personalized study tasks will appear here.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            <div class="dashboard-task-list">
+
+                @foreach (var task in Model.Tasks)
+                {
+                    <div class="dashboard-task-item">
+
+                        <div class="dashboard-task-content">
+
+                            <div class="dashboard-task-title">
+
+                                <span>
+                                    💌
+                                </span>
+
+                                <strong>
+                                    @task.Title
+                                </strong>
+
+                            </div>
+
+
+                            @if (!string.IsNullOrWhiteSpace(task.Description))
+                            {
+                                <div class="dashboard-task-description">
+
+                                    @foreach (var line in task.Description.Split(
+                                        new[] { "\r\n", "\n", "\r" },
+                                        StringSplitOptions.RemoveEmptyEntries))
+                                    {
+                                        <div>
+                                            📝 @line
+                                        </div>
+                                    }
+
+                                </div>
+                            }
+
+
+                            <div class="dashboard-task-date">
+
+                                ⌛️
+                                @task.DueDate.ToString("d MMMM yyyy")
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="dashboard-task-action">
+
+                            @if (!task.IsCompleted)
+                            {
+                                <form method="post"
+                                      asp-page-handler="CompleteTask">
+
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@task.Id" />
+
+                                    <button type="submit"
+                                            class="task-complete-button">
+
+                                        Mark as complete
+
+                                    </button>
+
+                                </form>
+                            }
+                            else
+                            {
+                                <button type="button"
+                                        class="task-completed-button">
+
+                                    Completed
+
+                                </button>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+
+        <div style="margin-top: 25px; text-align: center;">
+
+            <a asp-page="/Tasks/Add"
+               class="primary-dashboard-button">
+
+                + Add Task
+
+            </a>
+
+        </div>
+
+        </section>
+    <!-- ===================================================== -->
+    <!-- GOALS -->
+    <!-- ===================================================== -->
+
+    <section class="dashboard-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h2>Goals 🎯</h2>
+
+                <p>
+                    Your study goals
+                </p>
+
+            </div>
+
+        </div>
+
+
+        @if (Model.Goals.Count == 0)
+        {
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    🎯
+                </div>
+
+                <h3>No goals yet</h3>
+
+                <p>
+                    Add your first study goal to start planning your progress.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            <div class="dashboard-goals-list">
+
+                @foreach (var goal in Model.Goals)
+                {
+                    <div class="dashboard-goal-item">
+
+                        <div class="dashboard-goal-content">
+
+                            <div class="dashboard-goal-title">
+
+                                <span>
+                                    🎯
+                                </span>
+
+                                <strong>
+                                    @goal.Title
+                                </strong>
+
+                            </div>
+
+
+                            @if (!string.IsNullOrWhiteSpace(goal.Description))
+                            {
+                                <div class="dashboard-goal-description">
+
+                                    @foreach (var line in goal.Description.Split(
+                                        new[] { "\r\n", "\n", "\r" },
+                                        StringSplitOptions.RemoveEmptyEntries))
+                                    {
+                                        <div>
+                                            📝 @line
+                                        </div>
+                                    }
+
+                                </div>
+                            }
+
+
+                            <div class="dashboard-goal-date">
+
+                                ⌛️
+                                @goal.TargetDate.ToString("d MMMM yyyy")
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- GOAL COMPLETE -->
+
+                        <div class="dashboard-goal-action">
+
+                            @if (!goal.IsCompleted)
+                            {
+                                <form method="post"
+                                      asp-page-handler="CompleteGoal">
+
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@goal.Id" />
+
+                                    <button type="submit"
+                                            class="task-complete-button">
+
+                                        Mark as complete
+
+                                    </button>
+
+                                </form>
+                            }
+                            else
+                            {
+                                <button type="button"
+                                        class="task-completed-button">
+
+                                    Completed
+
+                                </button>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+
+        <div style="
+            margin-top: 25px;
+            text-align: center;
+        ">
+
+            <a asp-page="/StudyGoals/Add"
+               class="primary-dashboard-button">
+
+                + Add Goal
+
+            </a>
+
+        </div>
+
+    </section>
+    <!-- ===================================================== -->
+    <!-- SUBJECTS -->
+    <!-- ===================================================== -->
+
+    <section class="dashboard-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h2>Subjects 📚</h2>
+
+                <p>
+                    Your study subjects
+                </p>
+
+            </div>
+
+        </div>
+
+
+        @if (Model.Subjects.Count == 0)
+        {
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    📚
+                </div>
+
+                <h3>No subjects yet</h3>
+
+                <p>
+                    Add your first subject to start building your study plan.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            <div class="dashboard-subject-list">
+
+                @foreach (var subject in Model.Subjects)
+                {
+                    <div class="dashboard-subject-item">
+
+                        <div class="dashboard-subject-content">
+
+                            <div class="dashboard-subject-title">
+
+                                <span>
+                                    📚
+                                </span>
+
+                                <strong>
+                                    @subject.Name
+                                </strong>
+
+                            </div>
+
+
+                            @if (!string.IsNullOrWhiteSpace(subject.Description))
+                            {
+                                <div class="dashboard-subject-description">
+
+                                    @foreach (var line in subject.Description.Split(
+                                        new[] { "\r\n", "\n", "\r" },
+                                        StringSplitOptions.RemoveEmptyEntries))
+                                    {
+                                        <div>
+                                            📝 @line
+                                        </div>
+                                    }
+
+                                </div>
+                            }
+                            <div class="dashboard-subject-date">
+
+                                ⌛️
+                                @subject.WeeklyHours hours / week
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+
+        <div style="
+            margin-top: 25px;
+            text-align: center;
+        ">
+
+            <a asp-page="/Subjects/Add"
+               class="primary-dashboard-button">
+
+                + Add Subject
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ===================================================== -->
+    <!-- WEEKLY STUDY HOURS -->
+    <!-- ===================================================== -->
+
+    <section class="dashboard-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h2>
+                    Weekly Study Hours ⏰
+                </h2>
+
+                <p>
+                    Your available study time each week
+                </p>
+
+            </div>
+
+        </div>
+
+
+        @if (Model.WeeklyStudyHours == 0)
+        {
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    ⏰
+                </div>
+
+                <h3>
+                    No study availability set
+                </h3>
+
+                <p>
+                    Set how many hours you can realistically study each day.
+                </p>
+
+                <a asp-page="/StudyAvailability/Index"
+                   class="primary-dashboard-button">
+
+                    + Set Study Availability
+
+                </a>
+
+            </div>
+        }
+        else
+        {
+            <div class="dashboard-availability-content">
+
+                <div class="dashboard-availability-list">
+
+                    @foreach (DayOfWeek day in Enum.GetValues<DayOfWeek>())
+                    {
+                        <div class="dashboard-availability-day">
+
+                            <span>
+                                📅 @day
+                            </span>
+
+                            <strong>
+                                @Model.StudyHours[day].ToString("0.##") hours
+                            </strong>
+
+                        </div>
+                    }
+
+                </div>
+
+
+                <div class="dashboard-availability-total">
+
+                    <strong>
+                        Total:
+                        @Model.WeeklyStudyHours.ToString("0.##")
+                        hours / week
+                    </strong>
+
+                </div>
+
+
+                <div class="dashboard-availability-action">
+
+                    <a asp-page="/StudyAvailability/Index"
+                       class="primary-dashboard-button">
+
+                        Change Availability
+
+                    </a>
+
+                </div>
+
+            </div>
+        }
+
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- AI STUDY PLAN -->
+    <!-- ===================================================== -->
+
+    <section class="dashboard-card ai-card"
+             style="
+                width: 70%;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+             ">
+
+        <h2>
+            Create your AI Study Plan ✨
+        </h2>
+
+        <p>
+            Once you've entered your subjects, goals and available study time,
+            our AI will create a personalized study plan for you.
+        </p>
+
+        <a asp-page="/AIPlanner/Index"
+           id="create-ai-plan-button"
+           class="ai-button">
+
+            ✨ Create AI Study Plan
+
+        </a>
+
+    </section>
+
+</div>
+
+
+<script>
+
+    setTimeout(function () {
+
+        const message =
+            document.getElementById("dashboardMessage");
+
+        if (message) {
+
+            message.style.transition =
+                "opacity 0.5s ease";
+
+            message.style.opacity = "0";
+
+            setTimeout(function () {
+
+                message.remove();
+
+            }, 500);
+
+        }
+
+    }, 5000);
+
+</script>

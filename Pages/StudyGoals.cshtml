@@ -1,0 +1,81 @@
+@page
+@model AIStudyPlanner.Pages.StudyGoalsModel
+
+@{
+    ViewData["Title"] = "My Study Goals";
+}
+
+<div class="subjects-page">
+
+    <div class="subjects-header">
+
+        <div>
+            <p class="dashboard-label">AI STUDY PLANNER</p>
+
+            <h1>My Study Goals 🎯</h1>
+
+            <p>
+                Define your goals and let the planner help you reach them.
+            </p>
+        </div>
+
+        <a asp-page="/StudyGoals/Add"
+           class="primary-dashboard-button">
+            + Add Goal
+        </a>
+
+    </div>
+
+    @if (Model.Goals.Count == 0)
+    {
+        <div class="subjects-empty">
+
+            <div class="empty-icon">🎯</div>
+
+            <h2>No goals yet</h2>
+
+            <p>
+                Add your first study goal to start planning.
+            </p>
+
+        </div>
+    }
+    else
+    {
+        <div class="subjects-grid">
+
+            @foreach (var goal in Model.Goals)
+            {
+                <div class="subject-card">
+
+                    <div class="subject-icon">
+                        🎯
+                    </div>
+
+                    <div class="subject-content">
+
+                        <h2>@goal.Title</h2>
+
+                        <p>
+                            @goal.Description
+                        </p>
+
+                        <div class="subject-hours">
+                            📅 Target date:
+                            @goal.TargetDate.ToString("dd MMM yyyy")
+                        </div>
+
+                        <div class="subject-hours">
+                            🏆 Target grade:
+                            @goal.TargetGrade
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>

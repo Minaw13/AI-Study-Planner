@@ -1,0 +1,11 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+AIStudyPlanner.db
+*.db-shm
+*.db-wal
+__pycache__/
+*.pyc
+build-error.txt

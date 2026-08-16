@@ -1,0 +1,86 @@
+@page
+@model AIStudyPlanner.Pages.Tasks.AddModel
+
+@{
+    ViewData["Title"] = "Add Task";
+}
+
+<div class="subjects-page">
+
+    <div class="subjects-header">
+
+        <div>
+            <h1>Add a Study Task 📝</h1>
+
+            <p>
+                Add something you need to study or complete.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="dashboard-card">
+
+        <form method="post">
+
+            <div class="form-group">
+
+                <label asp-for="Task.Title">
+                    Task Title
+                </label>
+
+                <input asp-for="Task.Title"
+                       class="form-control"
+                       placeholder="e.g. Review Newton's Laws" />
+
+            </div>
+
+            <div class="form-group">
+
+                <label asp-for="Task.Description">
+                    Description
+                </label>
+
+                <textarea asp-for="Task.Description"
+                          class="form-control"
+                          rows="4"
+                          placeholder="What do you need to study?"></textarea>
+
+            </div>
+
+            <div class="form-group">
+
+                <label asp-for="Task.DueDate">
+                    Due Date
+                </label>
+
+                <input asp-for="Task.DueDate"
+                       type="date"
+                       class="form-control" />
+
+            </div>
+
+            <div style="
+                margin-top: 25px;
+                text-align: center;
+            ">
+
+                <button type="submit"
+                        class="primary-dashboard-button">
+
+                    Save Task
+
+                </button>
+
+                <a asp-page="/Dashboard"
+   style="margin-left: 12px;">
+    Cancel
+</a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

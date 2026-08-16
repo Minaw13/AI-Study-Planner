@@ -1,0 +1,107 @@
+@page
+@model AIStudyPlanner.Pages.Subjects.AddModel
+
+@{
+    ViewData["Title"] = "Add Subject";
+}
+
+<div class="subjects-page">
+
+    <div class="subjects-header">
+        <div>
+            <p class="dashboard-label">AI STUDY PLANNER</p>
+
+            <h1>Add a Subject 📚</h1>
+
+            <p>
+                Add a subject to your study profile.
+            </p>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+
+        <form method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger"></div>
+
+            <div class="form-group">
+
+                <label asp-for="Subject.Name">
+                    Subject Name
+                </label>
+
+                <input asp-for="Subject.Name"
+                       class="form-control"
+                       placeholder="e.g. Mathematics" />
+
+                <span asp-validation-for="Subject.Name"
+                      class="text-danger"></span>
+
+            </div>
+
+            <div class="form-group">
+
+                <label asp-for="Subject.Description">
+                    Description
+                </label>
+
+                <textarea asp-for="Subject.Description"
+                          class="form-control"
+                          rows="4"
+                          placeholder="e.g. Algebra, calculus and geometry"></textarea>
+
+                <span asp-validation-for="Subject.Description"
+                      class="text-danger"></span>
+
+            </div>
+
+            <div class="form-group">
+
+                <label asp-for="Subject.WeeklyHours">
+                    Hours per week
+                </label>
+
+                <input asp-for="Subject.WeeklyHours"
+                       type="number"
+                       min="1"
+                       max="168"
+                       class="form-control"
+                       placeholder="e.g. 5" />
+
+                <span asp-validation-for="Subject.WeeklyHours"
+                      class="text-danger"></span>
+
+            </div>
+
+            <div style="
+                margin-top: 25px;
+                text-align: center;
+            ">
+
+                <button type="submit"
+                        class="primary-dashboard-button">
+
+                    Save Subject
+
+                </button>
+
+                <a asp-page="/Dashboard"
+                   style="margin-left: 12px;">
+
+                    Cancel
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

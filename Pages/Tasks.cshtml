@@ -1,0 +1,241 @@
+@page
+
+@model AIStudyPlanner.Pages.TasksModel
+
+@{
+
+    ViewData["Title"] = "My Tasks";
+
+}
+
+<div class="subjects-page">
+
+    <div class="subjects-header">
+
+        <div>
+
+            <p class="dashboard-label">AI STUDY PLANNER</p>
+
+            <h1>My Tasks 📝</h1>
+
+            <p>
+
+                Keep track of everything you need to study.
+
+            </p>
+
+        </div>
+
+        <a asp-page="/Tasks/Add"
+
+           class="primary-dashboard-button">
+
+            + Add Task
+
+        </a>
+
+    </div>
+
+    @if (TempData["TaskMessage"] != null)
+
+    {
+
+        <div class="task-success-message" id="taskMessage">
+
+            @TempData["TaskMessage"]
+
+        </div>
+
+    }
+
+    @if (Model.Tasks.Count == 0)
+
+    {
+
+        <div class="subjects-empty">
+
+            <div class="empty-icon">📖</div>
+
+            <h2>No tasks yet</h2>
+
+            <p>
+
+                Add your first study task to get started.
+
+            </p>
+
+        </div>
+
+    }
+
+    else
+
+    {
+
+        <div class="subjects-grid tasks-grid">
+
+            @foreach (var task in Model.Tasks)
+
+            {
+
+                <div class="subject-card task-card">
+
+                    <div class="subject-content task-content">
+
+                        <!-- TASK TITLE -->
+
+                        <h2 class="task-title">
+
+                            <span class="task-title-icon">
+
+                            @(task.IsCompleted ? "✅" : "📝")
+
+                            </span>
+
+                            <span class="task-title-text">
+
+                                @task.Title
+
+                            </span>
+
+                        </h2>
+
+                        <!-- TASK DESCRIPTION -->
+
+                        @if (!string.IsNullOrWhiteSpace(task.Description))
+
+                        {
+
+                            <div class="task-description">
+
+                                @foreach (var line in task.Description
+
+                                    .Split(new[] { "\r\n", "\n", "\r" },
+
+                                           StringSplitOptions.RemoveEmptyEntries))
+
+                                {
+
+                                    <div class="task-description-line">
+
+                                        <span class="task-line-icon">
+
+                                            📝
+
+                                        </span>
+
+                                        <span class="task-line-text">
+
+                                            @line
+
+                                        </span>
+
+                                    </div>
+
+                                }
+
+                            </div>
+
+                        }
+
+                        <!-- DUE DATE -->
+
+                        <div class="subject-hours task-info">
+
+                            <span class="task-info-icon">
+
+                                📅
+
+                            </span>
+
+                            <span>
+
+                                Due:
+
+                                @task.DueDate.ToString("dd MMM yyyy")
+
+                            </span>
+
+                        </div>
+
+                        <!-- COMPLETION STATUS -->
+
+                        <div class="subject-hours task-info">
+
+                            <span class="task-info-icon">
+
+                                @(task.IsCompleted ? "✅" : "⏳")
+
+                            </span>
+
+                            <span>
+
+                                @(task.IsCompleted
+
+                                    ? "Completed"
+
+                                    : "Not completed")
+
+                            </span>
+
+                        </div>
+
+                        <!-- COMPLETE BUTTON -->
+
+                        <form method="post"
+
+                              asp-page="/Tasks/Complete"
+
+                              asp-route-id="@task.Id"
+
+                              style="margin-top: 18px;">
+
+                            <button type="submit"
+
+                                    class="primary-dashboard-button">
+
+                                @(task.IsCompleted
+
+                                    ? "↩️ Mark as incomplete"
+
+                                    : "✅ Mark as complete")
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            }
+
+        </div>
+
+    }
+
+</div>
+
+<script>
+
+    setTimeout(function () {
+
+        const message = document.getElementById("taskMessage");
+
+        if (message) {
+
+            message.style.transition = "opacity 0.5s ease";
+
+            message.style.opacity = "0";
+
+            setTimeout(function () {
+
+                message.remove();
+
+            }, 500);
+
+        }
+
+    }, 5000);
+
+</script>

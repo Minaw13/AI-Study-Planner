@@ -1,0 +1,70 @@
+@page
+@model RegisterModel
+
+@{
+    ViewData["Title"] = "Create Account";
+}
+
+<div class="auth-page">
+
+    <div class="auth-card">
+
+        <h1>Create your account</h1>
+
+        <p class="auth-subtitle">
+            Start building your personalized study plan.
+        </p>
+
+        <form method="post">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Input.Email">Email</label>
+                <input asp-for="Input.Email"
+                       class="form-control"
+                       placeholder="Enter your email" />
+                <span asp-validation-for="Input.Email"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Input.Password">Password</label>
+                <input asp-for="Input.Password"
+                       class="form-control"
+                       placeholder="Create a password" />
+                <span asp-validation-for="Input.Password"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Input.ConfirmPassword">
+                    Confirm Password
+                </label>
+
+                <input asp-for="Input.ConfirmPassword"
+                       class="form-control"
+                       placeholder="Confirm your password" />
+
+                <span asp-validation-for="Input.ConfirmPassword"
+                      class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="auth-button">
+                Create Account
+            </button>
+
+        </form>
+
+        <p class="auth-footer">
+            Already have an account?
+            <a asp-page="/Account/Login">Login</a>
+        </p>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

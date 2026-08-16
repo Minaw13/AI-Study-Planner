@@ -1,0 +1,129 @@
+@page
+@model AIStudyPlanner.Pages.StudyAvailability.IndexModel
+
+@{
+    ViewData["Title"] = "Study Availability";
+}
+
+<div class="subjects-page">
+
+    <div class="subjects-header">
+        <div>
+            <p class="dashboard-label">STUDY AVAILABILITY</p>
+
+            <h1>Study Availability ⏰</h1>
+
+            <p>
+                Tell the planner how much time you have available
+                for studying each day.
+            </p>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+
+        <h2>Your Weekly Availability</h2>
+
+        <p>
+            Enter the maximum number of hours you can realistically
+            study on each day.
+        </p>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div style="
+                margin-top: 20px;
+                padding: 15px;
+                border-radius: 10px;
+            ">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        <div asp-validation-summary="ModelOnly"
+             style="margin-top: 20px;">
+        </div>
+
+        <form method="post">
+
+            <div style="margin-top: 25px;">
+
+                @foreach (var day in Enum.GetValues<DayOfWeek>())
+                {
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 15px 0;
+                        border-bottom: 1px solid #eee;
+                    ">
+
+                        <strong>
+                            @day
+                        </strong>
+
+                        <div>
+
+                            <input
+                                type="number"
+                                name="Hours[@day]"
+                                value="@Model.Hours[day]"
+                                min="0"
+                                max="24"
+                                step="0.5"
+                                style="
+                                    width: 100px;
+                                    padding: 10px;
+                                    border-radius: 8px;
+                                    border: 1px solid #ccc;
+                                " />
+
+                            <span>
+                                hours
+                            </span>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+            <div style="margin-top: 30px;">
+
+                <h3>
+                    Total Weekly Study Time:
+                    @Model.TotalWeeklyHours.ToString("0.##") hours
+                </h3>
+
+            </div>
+
+            <!-- ACTION BUTTONS -->
+
+            <div style="
+                margin-top: 25px;
+                text-align: center;
+            ">
+
+                <button
+                    class="primary-dashboard-button"
+                    type="submit">
+
+                    Save Availability
+
+                </button>
+
+                <a asp-page="/Dashboard"
+                   style="margin-left: 12px;">
+
+                    Cancel
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

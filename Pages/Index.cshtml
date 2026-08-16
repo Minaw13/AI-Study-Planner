@@ -1,0 +1,290 @@
+﻿@page
+@model IndexModel
+
+@{
+    ViewData["Title"] = "AI Study Planner";
+}
+
+<div class="hero-section">
+
+    @if (TempData["SubscribeMessage"] != null)
+    {
+        <div class="task-success-message email-subscribe"
+             id="subscribeMessage"
+             style="
+                position: absolute;
+                top: -5px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 20;
+             ">
+            @TempData["SubscribeMessage"]
+        </div>
+    }
+
+    <div class="hero-buttons">
+
+        <a asp-page="/AIPlanner/Index" class="hero-link">
+            Create My Study Plan
+        </a>
+
+        <a href="#my-tasks" class="hero-link">
+            My Tasks
+        </a>
+
+    </div>
+
+</div>
+
+
+<section class="features-section" id="features">
+
+    <div class="section-heading animated-heading">
+
+        <h2>
+            Everything you need to study
+        </h2>
+
+        <p>
+            Your personal learning assistant
+        </p>
+
+    </div>
+
+
+    <div class="features-grid">
+
+        <div class="feature-card animated-feature feature-delay-1">
+
+            <div class="feature-icon calendar-icon">
+                <span class="ios-calendar">
+                    <span class="calendar-top"></span>
+                    <span class="calendar-number">17</span>
+                </span>
+            </div>
+
+            <h3>
+                Study Plans
+            </h3>
+
+            <p>
+                Generate personalized study schedules based on your
+                goals and available time
+            </p>
+
+        </div>
+
+
+        <div class="feature-card animated-feature feature-delay-2">
+
+            <div class="feature-icon">
+                📊
+            </div>
+
+            <h3>
+                Track Progress
+            </h3>
+
+            <p>
+                Monitor your study sessions and see how
+                you're improving over time
+            </p>
+
+        </div>
+
+
+        <div class="feature-card animated-feature feature-delay-3">
+
+            <div class="feature-icon">
+                🎯
+            </div>
+
+            <h3>
+                Set Your Goals
+            </h3>
+
+            <p>
+                Define your academic goals and let the planner
+                help you stay on track.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- MY TASKS -->
+<section class="my-tasks-section" id="my-tasks">
+
+    @if (!User.Identity?.IsAuthenticated ?? true)
+    {
+        <div class="my-tasks-card login-task-card">
+
+            <div class="my-tasks-icon">
+                🔐
+            </div>
+
+            <h2>
+                Please login first
+            </h2>
+
+            <p>
+                Login to view your personal study tasks and keep track
+                of everything you still need to complete.
+            </p>
+
+            <a asp-page="/Account/Login"
+               class="primary-dashboard-button">
+                Login
+            </a>
+
+        </div>
+    }
+    else
+    {
+        <div class="my-tasks-card">
+
+            <div class="my-tasks-header">
+
+                <div>
+                    <p class="dashboard-label">
+                        YOUR STUDY TASKS
+                    </p>
+
+                    <h2>
+                        My Tasks 📝
+                    </h2>
+
+                    <p>
+                        Here are the study tasks you still need to complete.
+                    </p>
+                </div>
+
+            </div>
+
+            @if (Model.PendingTasks.Count == 0)
+            {
+                <div class="my-tasks-empty">
+
+    <div class="my-tasks-icon">
+        🎉
+    </div>
+
+    <h3>
+        You're all caught up!
+    </h3>
+
+    <p>
+        You don't have any unfinished tasks right now.
+    </p>
+
+    @if (Model.HasSavedStudyPlan)
+    {
+        <a asp-page="/AIPlanner/Index"
+   class="my-study-plan-button">
+
+    @if (Model.HasStudyPlan)
+    {
+        <span>📖 My Study Plan</span>
+    }
+    else
+    {
+        <span>✨ Create My Study Plan</span>
+    }
+
+</a>
+    }
+
+</div>
+            }
+            else
+            {
+                <div class="home-task-list">
+
+                    @foreach (var task in Model.PendingTasks)
+                    {
+                        <div class="home-task-item">
+
+                            <div class="home-task-content">
+
+                                <h3 style="
+                                    font-size: 1.4rem !important;
+                                    margin: 0 0 8px 0 !important;
+                                    display: flex !important;
+                                    align-items: center !important;
+                                    gap: 8px !important;
+                                    white-space: normal;
+                                ">
+                                    <span style="
+                                        font-size: 1.6rem !important;
+                                        line-height: 1 !important;
+                                        display: inline-block !important;
+                                        flex-shrink: 0 !important;
+                                    ">💌</span>
+
+                                    <span>
+                                        @task.Title
+                                    </span>
+                                </h3>
+
+                                @if (!string.IsNullOrWhiteSpace(task.Description))
+                                {
+                                    <div style="
+                                        font-size: 1.08rem;
+                                        line-height: 1.8;
+                                        margin-top: 5px;
+                                    ">
+
+                                        @foreach (var line in task.Description.Split(
+                                            new[] { "\r\n", "\n", "\r" },
+                                            StringSplitOptions.RemoveEmptyEntries))
+                                        {
+                                            <div>
+                                                📝 @line
+                                            </div>
+                                        }
+
+                                    </div>
+                                }
+
+                                <span class="home-task-due"
+                                      style="font-size: 1.02rem;">
+
+                                    📅 Due:
+                                    @task.DueDate.ToString("dd MMM yyyy")
+
+                                </span>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            }
+
+            <!-- MY STUDY PLAN -->
+
+            <div style="
+                margin-top: 30px;
+                text-align: center;
+            ">
+                <a asp-page="/AIPlanner/Index" class="my-study-plan-button">
+                    @if (Model.HasStudyPlan)
+                    {
+                        <span>📖 My Study Plan</span>
+                    }
+                    else
+                    {
+                        <span>✨ Create My Study Plan</span>
+                    }
+
+                </a>
+
+            </div>
+
+        </div>
+    }
+
+</section>

@@ -1,0 +1,89 @@
+@page
+@model AIStudyPlanner.Pages.CalendarModel
+
+@{
+    ViewData["Title"] = "Study Calendar";
+}
+
+<div class="subjects-page">
+
+    <div class="subjects-header">
+
+        <div>
+            <p class="dashboard-label">AI STUDY PLANNER</p>
+
+            <h1>Study Calendar 📅</h1>
+
+            <p>
+                See your study tasks and deadlines in one place.
+            </p>
+        </div>
+
+        <a asp-page="/Tasks/Add"
+           class="primary-dashboard-button">
+            + Add Task
+        </a>
+
+    </div>
+
+    @if (Model.Tasks.Count == 0)
+    {
+        <div class="subjects-empty">
+
+            <div class="empty-icon">📅</div>
+
+            <h2>Your calendar is empty</h2>
+
+            <p>
+                Add a study task and its due date to see it here.
+            </p>
+
+        </div>
+    }
+    else
+    {
+        <div class="dashboard-card">
+
+            <h2>Upcoming Study Tasks</h2>
+
+            <div style="margin-top: 20px;">
+
+                @foreach (var task in Model.Tasks)
+                {
+                    <div class="subject-card"
+                         style="margin-bottom: 15px;">
+
+                        <div class="subject-icon">
+                            @(task.IsCompleted ? "✅" : "📝")
+                        </div>
+
+                        <div class="subject-content">
+
+                            <h2>@task.Title</h2>
+
+                            <p>
+                                @task.Description
+                            </p>
+
+                            <div class="subject-hours">
+                                📅
+                                @task.DueDate.ToString("dddd, dd MMMM yyyy")
+                            </div>
+
+                            <div class="subject-hours">
+                                @(task.IsCompleted
+                                    ? "✅ Completed"
+                                    : "⏳ Not completed")
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    }
+
+</div>

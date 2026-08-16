@@ -1,0 +1,565 @@
+@page
+@model AIStudyPlanner.Pages.AIPlanner.IndexModel
+
+@functions
+{
+    public string FormatStudyTime(double hours)
+    {
+        int totalMinutes = (int)Math.Round(hours * 60);
+
+        int h = totalMinutes / 60;
+        int m = totalMinutes % 60;
+
+        if (h > 0 && m > 0)
+        {
+            return $"{h} {(h == 1 ? "hour" : "hours")} {m} {(m == 1 ? "minute" : "minutes")}";
+        }
+
+        if (h > 0)
+        {
+            return $"{h} {(h == 1 ? "hour" : "hours")}";
+        }
+
+        return $"{m} {(m == 1 ? "minute" : "minutes")}";
+    }
+}
+
+@{
+    ViewData["Title"] = "AI Planner";
+}
+
+<div class="subjects-page">
+
+    <!-- HEADER -->
+
+    <div class="subjects-header">
+
+        <div>
+
+            <h1>💖 AI Study Planner 💖</h1>
+
+            <h3>
+                Your personalized study plan
+            </h3>
+
+        </div>
+
+    </div>
+
+
+    <!-- BASIC STUDY DATA -->
+
+    @if (Model.PlanDocument == null)
+    {
+        <div class="dashboard-card study-data-header">
+
+            <h2>Your Study Data</h2>
+
+            <p>
+                Your current academic information is being used to create
+                your personalized study plan.
+            </p>
+
+
+            <div class="study-data-grid">
+
+                <!-- SUBJECTS -->
+
+                <div class="study-data-item">
+
+                    <div class="study-data-title">
+
+                        <span class="study-data-icon">
+                            📚
+                        </span>
+
+                        <span>
+                            Subjects
+                        </span>
+
+                    </div>
+
+                    <div class="study-data-number">
+                        @Model.SubjectCount
+                    </div>
+
+                </div>
+
+                <!-- GOALS -->
+
+                <div class="study-data-item">
+
+                    <div class="study-data-title">
+
+                        <span class="study-data-icon">
+                            🎯
+                        </span>
+
+                        <span>
+                            Goals
+                        </span>
+
+                    </div>
+
+                    <div class="study-data-number">
+                        @Model.GoalCount
+                    </div>
+
+                </div>
+
+
+                <!-- TASKS -->
+
+                <div class="study-data-item">
+
+                    <div class="study-data-title">
+
+                        <span class="study-data-icon">
+                            📝
+                        </span>
+
+                        <span>
+                            Tasks
+                        </span>
+
+                    </div>
+
+                    <div class="study-data-number">
+                        @Model.TaskCount
+                    </div>
+
+                </div>
+
+
+                <!-- WEEKLY STUDY HOURS -->
+
+                <div class="study-data-item">
+
+                    <div class="study-data-title">
+
+                        <span class="study-data-icon">
+                            ⏰
+                        </span>
+
+                        <span>
+                            Weekly Study Hours
+                        </span>
+
+                    </div>
+
+                    <div class="study-data-number">
+                        @Model.WeeklyStudyHours
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- GENERATE BUTTON -->
+
+            <div class="study-data-generate"
+                 style="margin-top: 30px;">
+
+                <form method="post"
+                      asp-page-handler="Generate">
+
+                    <button class="primary-dashboard-button"
+                            type="submit">
+
+                        ✨ Generate My Study Plan
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+    }
+
+
+    <!-- AI RESULT -->
+
+    @if (Model.PlanDocument != null)
+    {
+        var root = Model.PlanDocument.RootElement;
+
+        <div class="dashboard-card ai-plan-result-card"
+             style="margin-top: 30px;">
+
+
+            <!-- AI PLAN HEADER -->
+
+            <div class="ai-plan-header">
+
+                <h1>
+                    📖 Your AI Study Plan
+                </h1>
+
+                <p>
+                    Your plan has been generated using your study data
+                    and the machine learning model.
+                </p>
+
+            </div>
+
+            <!-- SUMMARY -->
+<!-- SUMMARY -->
+
+@if (root.TryGetProperty("summary", out var summary))
+{
+    <div style="margin-top: 25px;">
+
+        <h1>📊 Weekly Overview</h1>
+
+        <div class="subjects-grid" style="margin-top: 20px;">
+
+            <!-- AVAILABLE HOURS -->
+
+            <div class="study-data-item">
+
+                <div class="study-data-title">
+
+                    <span class="study-data-icon">
+                        ⏰
+                    </span>
+
+                    <span>
+                        Available Hours
+                    </span>
+
+                </div>
+
+                <div class="study-data-number">
+                    @(summary.GetProperty("weeklyAvailableHours").GetDouble())
+                </div>
+
+            </div>
+
+
+            <!-- REQUIRED SUBJECT HOURS -->
+
+            <div class="study-data-item">
+
+                <div class="study-data-title">
+
+                    <span class="study-data-icon">
+                        📚
+                    </span>
+
+                    <span>
+                        Required Subject Hours
+                    </span>
+
+                </div>
+
+                <div class="study-data-number">
+                    @(summary.GetProperty("totalSubjectHours").GetDouble())
+                </div>
+
+            </div>
+
+
+            <!-- WORKLOAD COVERAGE -->
+
+            <div class="study-data-item">
+
+                <div class="study-data-title">
+
+                    <span class="study-data-icon">
+                        📈
+                    </span>
+
+                    <span>
+                        Workload Coverage
+                    </span>
+
+                </div>
+
+                <div class="study-data-number">
+                    @(summary.GetProperty("workloadCoverage").GetDouble())%
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+            <!-- PRIORITY TASKS -->
+
+            @if (root.TryGetProperty("priorityTasks", out var priorityTasks)
+                && priorityTasks.GetArrayLength() > 0)
+            {
+                <div style="margin-top: 35px;">
+
+                    <h3>
+                        🔥 Priority Tasks
+                    </h3>
+
+
+                    @foreach (var task in priorityTasks.EnumerateArray())
+                    {
+                        <div class="dashboard-card priority-task-card">
+
+                            <h3>
+
+                                ✏️
+                                @task.GetProperty("title").GetString()
+
+                            </h3>
+
+
+                            @if (task.TryGetProperty(
+                                "description",
+                                out var description))
+                            {
+                                var descriptionText =
+                                    description.GetString() ?? "";
+
+                                <div class="priority-task-description">
+
+                                    @foreach (var line in descriptionText.Split(
+                                        new[] { "\r\n", "\n", "\r" },
+                                        StringSplitOptions.RemoveEmptyEntries))
+                                    {
+                                        <div class="priority-task-line">
+
+                                            <span class="priority-task-line-icon">
+                                                📝
+                                            </span>
+
+                                            <span>
+                                                @line.Trim()
+                                            </span>
+
+                                        </div>
+                                    }
+
+                                </div>
+                            }
+
+
+                            <p>
+
+                                📅 Due:
+
+                                @task.GetProperty("dueDate").GetString()
+
+                            </p>
+
+
+                            <p>
+
+                                🔥 Priority:
+
+                                @task.GetProperty("priorityScore").GetInt32()
+
+                            </p>
+
+
+                        </div>
+                    }
+
+                </div>
+            }
+
+            <!-- SUBJECT PLAN -->
+
+            @if (root.TryGetProperty("subjectPlan", out var subjectPlan)
+                && subjectPlan.GetArrayLength() > 0)
+            {
+                <div class="ai-subject-plan">
+
+                    <h3>
+                        📓 AI Recommended Study Time
+                    </h3>
+
+
+                    <div class="subjects-grid ai-subject-grid">
+
+                        @foreach (var subject in subjectPlan.EnumerateArray())
+                        {
+                            <div class="study-data-item ai-subject-card">
+
+
+                                <!-- SUBJECT NAME -->
+
+                                <div class="study-data-title">
+
+                                    <span class="study-data-icon">
+                                        📖
+                                    </span>
+
+                                    <span class="ai-subject-name">
+                                        @subject.GetProperty("name").GetString()
+                                    </span>
+
+                                </div>
+
+                                <!-- TIME INFORMATION -->
+
+                                <div class="study-data-number ai-subject-time">
+
+
+                                    <div class="ai-time-row">
+
+                                        <span>
+                                            Weekly workload:
+                                        </span>
+
+                                        <strong>
+
+                                            @FormatStudyTime(
+                                                subject
+                                                    .GetProperty("weeklyHours")
+                                                    .GetDouble()
+                                            )
+
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="ai-time-row">
+
+                                        <span>
+                                            🍎📚 Recommended:
+                                        </span>
+
+                                        <strong>
+
+                                            @FormatStudyTime(
+                                                subject
+                                                    .GetProperty("recommendedHours")
+                                                    .GetDouble()
+                                            )
+
+                                        </strong>
+
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+            }
+
+            <!-- DAILY SCHEDULE -->
+
+            @if (root.TryGetProperty("dailySchedule", out var dailySchedule)
+                && dailySchedule.GetArrayLength() > 0)
+            {
+                <div style="margin-top: 35px;">
+
+                    <h3>
+                        📅 Your Weekly Schedule
+                    </h3>
+
+
+                    @foreach (var day in dailySchedule.EnumerateArray())
+                    {
+                        <div class="dashboard-card ai-plan-card"
+                             style="margin-top: 30px;">
+
+                            <h3>
+                                @day.GetProperty("day").GetString()
+                            </h3>
+
+
+                            <p>
+    ⏰ Available:
+    @FormatStudyTime(
+        day.GetProperty("availableHours").GetDouble()
+    )
+</p>
+
+
+                            @if (day.TryGetProperty(
+                                "studySessions",
+                                out var sessions))
+                            {
+                                @foreach (var session in sessions.EnumerateArray())
+                                {
+                                    <p>
+    📖
+    @session.GetProperty("subject").GetString()
+    —
+    @FormatStudyTime(
+        session.GetProperty("hours").GetDouble()
+    )
+</p>
+                                }
+                            }
+
+                        </div>
+                    }
+
+                </div>
+            }
+
+            <!-- PLANNING LOGIC -->
+
+            @if (root.TryGetProperty(
+                "planningLogic",
+                out var planningLogic))
+            {
+                <div style="margin-top: 35px;">
+
+                    <h3>
+                         How Your Plan Was Created
+                    </h3>
+
+
+                    @foreach (var logic in planningLogic.EnumerateArray())
+                    {
+                        <p>
+                            ✓ @logic.GetString()
+                        </p>
+                    }
+
+                </div>
+            }
+
+
+            <!-- WARNINGS -->
+
+            @if (root.TryGetProperty(
+                "warnings",
+                out var warnings)
+                && warnings.GetArrayLength() > 0)
+            {
+                <div style="margin-top: 35px;">
+
+                    <h3>
+                        ⚠️ Planner Notes
+                    </h3>
+
+
+                    @foreach (var warning in warnings.EnumerateArray())
+                    {
+                        <div class="dashboard-card"
+                             style="margin-top: 10px;">
+
+                            <p>
+                                ⚠️ @warning.GetString()
+                            </p>
+
+                        </div>
+                    }
+
+                </div>
+            }
+
+
+        </div>
+    }
+
+</div>
