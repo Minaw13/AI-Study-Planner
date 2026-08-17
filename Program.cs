@@ -39,9 +39,6 @@ builder.Services.AddSingleton<PythonAIProcessManager>();
 
 var app = builder.Build();
 
-var pythonAI = app.Services.GetRequiredService<PythonAIProcessManager>();
-pythonAI.Start();
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
